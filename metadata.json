@@ -1,0 +1,6 @@
+{
+  "name": "I torneo padel",
+  "description": "Una aplicación simple y estética para importar y visualizar partidos de un torneo de pádel.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
