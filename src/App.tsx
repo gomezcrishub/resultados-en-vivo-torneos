@@ -355,7 +355,7 @@ export default function App() {
         </span>
       );
     }
-    return <>{clean}</>;
+    return <span translate="no" className="notranslate">{clean}</span>;
   };
 
   const renderSetScoresJSX = (matchItem: Match, isPareja1: boolean, isPlayoffCard: boolean = false) => {
@@ -570,7 +570,7 @@ export default function App() {
                       </div>
 
                       {/* Title */}
-                      <h3 className="text-md font-black font-display uppercase tracking-tight text-[#1A1A1A] group-hover:text-red-500 transition-colors">
+                      <h3 translate="no" className="text-md font-black font-display uppercase tracking-tight text-[#1A1A1A] group-hover:text-red-500 transition-colors notranslate">
                         {t.name}
                       </h3>
 
@@ -643,7 +643,7 @@ export default function App() {
               
               <div className="flex items-center gap-2">
                 <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">Estás viendo:</span>
-                <span className="text-xs font-black font-display uppercase tracking-wider text-red-650 bg-red-50 border border-red-200 px-2 py-0.5">
+                <span translate="no" className="text-xs font-black font-display uppercase tracking-wider text-red-650 bg-red-50 border border-red-200 px-2 py-0.5 notranslate">
                   {selectedTournament?.name}
                 </span>
               </div>
@@ -756,7 +756,7 @@ export default function App() {
                                   <td className="py-2.5 px-1 text-center font-serif font-bold italic text-sm">
                                     {idx + 1}.
                                   </td>
-                                  <td className="py-3 px-2 font-semibold text-[#1A1A1A] tracking-tight leading-tight uppercase text-[11px]">
+                                  <td translate="no" className="py-3 px-2 font-semibold text-[#1A1A1A] tracking-tight leading-tight uppercase text-[11px] notranslate">
                                     {standingItem.pareja}
                                   </td>
                                   <td className="py-2.5 px-1.5 text-center font-mono text-zinc-650">{standingItem.jugados}</td>
