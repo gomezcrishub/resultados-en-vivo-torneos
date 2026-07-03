@@ -625,14 +625,11 @@ export default function App() {
         >
           <div className="w-full">
             <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-[3.8rem] xl:text-[4.8rem] font-black font-display tracking-tighter leading-none uppercase text-[#1A1A1A] w-full block break-all">
-              @EVENTOSENVIVO.PADEL
+              PARTIDOS EN VIVO
             </h1>
           </div>
 
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 pt-0">
-            <p className="font-sans text-[11px] tracking-wider uppercase opacity-65 max-w-xl leading-relaxed">
-              Acompañando cada evento deportivo en Santiago del Estero
-            </p>
 
             {/* Action Hub and Link to Docs in Editorial style */}
             <div
@@ -679,7 +676,7 @@ export default function App() {
               {selectedTournamentId && (
                 <button
                   onClick={() => handleSelectTournament(null)}
-                  className="self-stretch sm:self-end inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-[10.5px] font-extrabold uppercase tracking-widest text-zinc-700 hover:text-white bg-zinc-100 hover:bg-[#1A1A1A] border-2 border-[#1A1A1A] transition-all cursor-pointer shadow-[2px_2px_0px_0px_#1A1A1A] active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_#1A1A1A]"
+                  className="self-stretch sm:self-end inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-[10.5px] font-extrabold uppercase tracking-widest text-[#1A1A1A] bg-[#decfa6] hover:bg-[#cfbe95] border-2 border-[#1A1A1A] transition-all cursor-pointer shadow-[2px_2px_0px_0px_#1A1A1A] active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_#1A1A1A] rounded-none"
                 >
                   <span>← Volver a Torneos</span>
                 </button>
@@ -794,7 +791,7 @@ export default function App() {
                   <button
                     key={t.id}
                     onClick={() => handleSelectTournament(t.id)}
-                    className="group bg-[#F4C430] hover:bg-[#F6CD4D] text-left p-3.5 border-2 border-[#1A1A1A] rounded-none shadow-[3px_3px_0px_0px_#1A1A1A] transition-all hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_#1A1A1A] flex flex-col justify-between min-h-[120px] cursor-pointer"
+                    className="group bg-[#decfa6] hover:bg-[#cfbe95] text-left p-3.5 border-2 border-[#1A1A1A] rounded-none shadow-[3px_3px_0px_0px_#1A1A1A] transition-all hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_#1A1A1A] flex flex-col justify-between min-h-[120px] cursor-pointer"
                   >
                     <div className="space-y-1.5 w-full">
                       {/* Badge / Index card styling */}
@@ -870,7 +867,7 @@ export default function App() {
               </span>
               <span
                 translate="no"
-                className="text-xs font-black font-display uppercase tracking-wider text-red-650 bg-red-50 border border-red-200 px-2 py-0.5 notranslate"
+                className="text-xs font-black font-display uppercase tracking-wider text-red-650 bg-white border border-red-200 px-2 py-0.5 notranslate"
               >
                 {selectedTournament?.name}
               </span>
