@@ -611,6 +611,116 @@ export default function App() {
     );
   };
 
+  const renderBracketMatchCard = (
+    matchItem: Match,
+    label: string,
+    isFinal: boolean = false,
+    isBorderless: boolean = false
+  ) => {
+    const isAnnulled = (matchItem.pareja1 || "").trim().toUpperCase() === "NO";
+    const isPlayed = matchItem.estado === "Jugado";
+    const isWinnerP1 =
+      isPlayed &&
+      (matchItem.gamePareja1 || 0) > (matchItem.gamePareja2 || 0);
+    const isWinnerP2 =
+      isPlayed &&
+      (matchItem.gamePareja2 || 0) > (matchItem.gamePareja1 || 0);
+
+    // Dynamic borders & bg based on final and play status
+    let cardClasses = "";
+    if (isBorderless) {
+      cardClasses = "bg-transparent border-none shadow-none p-0 pt-3.5 overflow-visible";
+    } else if (isFinal) {
+      cardClasses = isPlayed
+        ? "bg-[#1A1A1A] text-white border-[#b59463] ring-1 ring-[#b59463] shadow-[0_4px_12px_rgba(181,148,99,0.2)]"
+        : "bg-[#decfa6]/15 text-[#1A1A1A] border-dashed border-[#b59463] shadow-[2px_2px_4px_rgba(0,0,0,0.02)]";
+    } else {
+      cardClasses = isAnnulled
+        ? "bg-zinc-100/50 text-zinc-400 border-dashed border-zinc-200 opacity-60 pointer-events-none select-none"
+        : isPlayed
+          ? "bg-[#1A1A1A] text-white border-transparent"
+          : "bg-[#FAF8F5]/90 text-[#1A1A1A] border-[#1A1A1A]/10 hover:border-[#1A1A1A]/30";
+    }
+
+    return (
+      <div
+        key={matchItem.id}
+        className={`rounded-none ${isBorderless ? "" : isFinal ? "border-2 p-3.5" : "border p-3"} transition-all duration-300 relative overflow-hidden ${!isBorderless ? "shadow-[1px_1px_3px_rgba(0,0,0,0.02)]" : ""} ${cardClasses}`}
+      >
+        {isFinal && (
+          <div className="absolute top-0 right-0 bg-[#b59463] text-white text-[5px] font-black uppercase px-1.5 py-0.5 tracking-wider font-mono">
+            CAMPEONATO
+          </div>
+        )}
+        {!isBorderless && (
+          <div className="flex items-center justify-between mb-1.5 text-[8px] font-bold font-mono tracking-wider opacity-60">
+            <span>{label}</span>
+            <span>
+              {isAnnulled ? "NO SE JUEGA" : isPlayed ? "JUGADO" : "PENDIENTE"}
+            </span>
+          </div>
+        )}
+        {isBorderless && (
+          <div className="absolute top-0 right-0 text-[7px] font-black font-mono tracking-widest text-[#1A1A1A]/50 uppercase bg-[#FAF8F5] border border-[#1A1A1A]/5 px-1.5 py-0.5 shadow-[1px_1px_0px_rgba(0,0,0,0.02)]">
+            {isAnnulled ? "NO SE JUEGA" : isPlayed ? "JUGADO" : "PENDIENTE"}
+          </div>
+        )}
+        <div className="space-y-1.5">
+          {/* Player 1 Row */}
+          <div
+            className={`flex items-center justify-between px-2 py-1 rounded-none ${isFinal ? "text-[10px]" : "text-[8px]"} uppercase ${
+              isAnnulled
+                ? "bg-zinc-200/20 border border-zinc-300/20 text-zinc-400/80 font-normal line-through"
+                : isBorderless
+                  ? isPlayed
+                    ? `${isWinnerP1 ? "bg-[#1A1A1A] font-black text-white border border-[#1A1A1A]" : "bg-[#1A1A1A]/95 opacity-50 text-white border border-transparent"}`
+                    : "bg-white border border-[#1A1A1A]/10 font-semibold text-[#1A1A1A]"
+                  : isPlayed
+                    ? isWinnerP1
+                      ? isFinal
+                        ? "font-black text-[#decfa6] text-[11px]"
+                        : "font-black text-white"
+                      : "opacity-35 text-white"
+                    : isFinal
+                      ? "bg-white/95 border border-[#decfa6]/60 font-bold text-[#1A1A1A]"
+                      : "bg-white/85 border border-[#1A1A1A]/5 font-semibold text-[#1A1A1A]"
+            }`}
+          >
+            <span className="truncate pr-1.5 max-w-[130px] sm:max-w-[150px]">
+              {renderParejaName(matchItem.pareja1, isPlayed || isAnnulled)}
+            </span>
+            {!isAnnulled && renderSetScoresJSX(matchItem, true, true)}
+          </div>
+          {/* Player 2 Row */}
+          <div
+            className={`flex items-center justify-between px-2 py-1 rounded-none ${isFinal ? "text-[10px]" : "text-[8px]"} uppercase ${
+              isAnnulled
+                ? "bg-zinc-200/20 border border-zinc-300/20 text-zinc-400/80 font-normal line-through"
+                : isBorderless
+                  ? isPlayed
+                    ? `${isWinnerP2 ? "bg-[#1A1A1A] font-black text-white border border-[#1A1A1A]" : "bg-[#1A1A1A]/95 opacity-50 text-white border border-transparent"}`
+                    : "bg-white border border-[#1A1A1A]/10 font-semibold text-[#1A1A1A]"
+                  : isPlayed
+                    ? isWinnerP2
+                      ? isFinal
+                        ? "font-black text-[#decfa6] text-[11px]"
+                        : "font-black text-white"
+                      : "opacity-35 text-white"
+                    : isFinal
+                      ? "bg-white/95 border border-[#decfa6]/60 font-bold text-[#1A1A1A]"
+                      : "bg-white/85 border border-[#1A1A1A]/5 font-semibold text-[#1A1A1A]"
+            }`}
+          >
+            <span className="truncate pr-1.5 max-w-[130px] sm:max-w-[150px]">
+              {renderParejaName(matchItem.pareja2, isPlayed || isAnnulled)}
+            </span>
+            {!isAnnulled && renderSetScoresJSX(matchItem, false, true)}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-[#FDFCFB] text-[#1A1A1A] selection:bg-red-600 selection:text-white font-sans relative">
       {/* Editorial Watermark Grid Background Accent */}
@@ -867,7 +977,7 @@ export default function App() {
               </span>
               <span
                 translate="no"
-                className="text-xs font-black font-display uppercase tracking-wider text-red-650 bg-white border border-red-200 px-2 py-0.5 notranslate"
+                className="text-xs font-black font-display uppercase tracking-wider text-[#b59463] bg-white border border-[#b59463] px-2 py-0.5 notranslate"
               >
                 {selectedTournament?.name}
               </span>
@@ -886,7 +996,7 @@ export default function App() {
                     : "bg-transparent text-[#1A1A1A] hover:bg-zinc-100"
                 }`}
               >
-                <Award className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
+                <Award className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 text-[#b59463]" />
                 <span className="truncate">Clasificados</span>
               </button>
               <button
@@ -897,7 +1007,7 @@ export default function App() {
                     : "bg-transparent text-[#1A1A1A] hover:bg-zinc-100"
                 }`}
               >
-                <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
+                <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 text-[#b59463]" />
                 <span className="truncate">PARTIDOS</span>
               </button>
             </div>
@@ -916,7 +1026,7 @@ export default function App() {
                     <div className="bg-[#FAF8F5] border border-[#1A1A1A]/10 p-3 sm:p-5 rounded-none">
                       <div className="flex items-center justify-between mb-6 border-b border-[#1A1A1A] pb-3">
                         <h2 className="text-lg sm:text-xl font-black font-display uppercase tracking-tight text-[#1A1A1A] flex items-center gap-2">
-                          <Award className="w-5 h-5 text-red-600" />{" "}
+                          <Award className="w-5 h-5 text-[#b59463]" />{" "}
                           CLASIFICACIÓN
                         </h2>
                       </div>
@@ -990,7 +1100,7 @@ export default function App() {
                                               key={standingItem.pareja}
                                               className={`hover:bg-[#1A1A1A]/5 transition-colors ${
                                                 isTop2
-                                                  ? "bg-emerald-100/40 font-medium"
+                                                  ? "bg-[#decfa6]/30 font-medium"
                                                   : ""
                                               }`}
                                             >
@@ -1060,15 +1170,7 @@ export default function App() {
                         Fase de Grupos
                       </h2>
                     </div>
-                    {/* Total Results Feed Counter */}
-                    <div className="bg-[#FAF8F5] border-l-2 border-red-650 p-3 text-[11px] text-[#1A1A1A] leading-relaxed">
-                      <span className="font-bold block uppercase text-red-650 tracking-wider mb-0.5">
-                        Reglamento Fase de Grupos
-                      </span>
-                      <p className="opacity-80">
-                        Cada pareja juega 2 partidos por grupo. Clasifican las 2 mejores parejas. En grupo de 3 juegan TODOS vs TODOS. En grupo de 4 juegan 1vs2, 3vs4 y luego GANADORES vs PERDEDORES.
-                      </p>
-                    </div>
+
 
                     {/* List and Feed representing matches */}
                     <div className={groupedMatches.length === 0 ? "w-full" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-start"}>
@@ -1107,75 +1209,11 @@ export default function App() {
 
                               {/* Vertical list of matches in this group */}
                               <div className="space-y-3">
-                                {group.list.map((matchItem) => {
-                                  const isPlayed =
-                                    matchItem.estado === "Jugado";
-                                  const isWinnerP1 =
-                                    isPlayed &&
-                                    (matchItem.gamePareja1 || 0) >
-                                      (matchItem.gamePareja2 || 0);
-                                  const isWinnerP2 =
-                                    isPlayed &&
-                                    (matchItem.gamePareja2 || 0) >
-                                      (matchItem.gamePareja1 || 0);
-
-                                  return (
-                                    <div
-                                      key={matchItem.id}
-                                      className={`rounded-none border p-3 transition-all duration-300 shadow-[1px_1px_3px_rgba(0,0,0,0.02)] ${
-                                        isPlayed
-                                          ? "bg-[#1A1A1A] text-white border-transparent"
-                                          : "bg-[#FAF8F5]/90 text-[#1A1A1A] border-[#1A1A1A]/10 hover:border-[#1A1A1A]/30"
-                                      }`}
-                                      id={`match-card-${matchItem.id}`}
-                                    >
-                                      <div className="flex items-center justify-between mb-1.5 text-[8px] font-bold font-mono tracking-wider opacity-60">
-                                        <span>PARTIDO</span>
-                                        <span>
-                                          {isPlayed ? "JUGADO" : "PENDIENTE"}
-                                        </span>
-                                      </div>
-                                      <div className="space-y-1.5">
-                                        {/* Player 1 Row */}
-                                        <div
-                                          className={`flex items-center justify-between px-2 py-1 rounded-none text-[10px] uppercase ${
-                                            isPlayed
-                                              ? isWinnerP1
-                                                ? "font-black text-white"
-                                                : "opacity-35 text-white"
-                                              : "bg-white/85 border border-[#1A1A1A]/5 font-semibold"
-                                          }`}
-                                        >
-                                          <span className="truncate pr-1.5">
-                                            {renderParejaName(
-                                              matchItem.pareja1,
-                                              isPlayed,
-                                            )}
-                                          </span>
-                                          {renderSetScoresJSX(matchItem, true, true)}
-                                        </div>
-                                        {/* Player 2 Row */}
-                                        <div
-                                          className={`flex items-center justify-between px-2 py-1 rounded-none text-[10px] uppercase ${
-                                            isPlayed
-                                              ? isWinnerP2
-                                                ? "font-black text-white"
-                                                : "opacity-35 text-white"
-                                              : "bg-white/85 border border-[#1A1A1A]/5 font-semibold"
-                                          }`}
-                                        >
-                                          <span className="truncate pr-1.5">
-                                            {renderParejaName(
-                                              matchItem.pareja2,
-                                              isPlayed,
-                                            )}
-                                          </span>
-                                          {renderSetScoresJSX(matchItem, false, true)}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  );
-                                })}
+                                {group.list.map((matchItem) => (
+                                  <div key={matchItem.id} id={`match-card-${matchItem.id}`}>
+                                    {renderBracketMatchCard(matchItem, "", false, true)}
+                                  </div>
+                                ))}
                               </div>
                             </motion.div>
                           ))
@@ -1186,406 +1224,152 @@ export default function App() {
                 </div>
 
                 {/* LOWER SECTION: Eliminatorias (Playoffs) */}
-                <div className="pt-8 border-t-2 border-[#1A1A1A] w-full space-y-12">
-                  {/* Row of 3 Columns: Octavos, Cuartos, Semis */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-start w-full">
-                    {/* COLUMN 1: Octavos de Final */}
-                    <div className="space-y-6">
-                      <section className="space-y-6">
-                        <div className="flex items-center justify-between pb-1.5 border-b-2 border-[#1A1A1A]">
-                          <h2 className="text-[14px] sm:text-[15px] font-black font-mono tracking-widest uppercase text-[#1A1A1A]">
-                            Octavos de Final
-                          </h2>
-                        </div>
+                <div className="pt-8 border-t-2 border-[#1A1A1A] w-full space-y-6">
+                  {/* Phase Title Header */}
+                  <div className="flex items-center justify-between pb-2 border-b-2 border-[#1A1A1A]">
+                    <h2 className="text-sm sm:text-base font-black font-mono tracking-widest uppercase text-[#1A1A1A] flex items-center gap-2">
+                      <span>🏆</span>
+                      <span>CUADRO DE ELIMINATORIAS DIRECTAS</span>
+                    </h2>
+                  </div>
 
-                        {/* Header of Playoffs Section */}
-                        <div className="bg-[#FAF8F5] border-l-2 border-red-650 p-3 text-[11px] text-[#1A1A1A] leading-relaxed">
-                          <span className="font-bold block uppercase text-red-650 tracking-wider mb-0.5">
-                            Eliminatorias 8vos
-                          </span>
-                          <p className="opacity-80 text-[10px]">
-                            Rondas eliminatorias directas. Sincronizadas en tiempo real.
-                          </p>
-                        </div>
-
-                        {/* Octavos Matches List */}
-                        <div className="space-y-4">
-                          {(() => {
-                            const octavosPairs = [];
-                            for (let i = 0; i < playoffRounds.octavos.length; i += 2) {
-                              octavosPairs.push(playoffRounds.octavos.slice(i, i + 2));
-                            }
-                            return octavosPairs.map((pair, pairIdx) => {
-                              return (
-                                <div key={pairIdx} className="flex items-stretch gap-3">
-                                  {/* Left Side: The 2 matches in this branch */}
-                                  <div className="flex-1 space-y-2">
-                                    {pair.map((matchItem, subIdx) => {
-                                      const globalIdx = pairIdx * 2 + subIdx;
-                                      const isAnnulled = (matchItem.pareja1 || "").trim().toUpperCase() === "NO";
-                                      const isPlayed = matchItem.estado === "Jugado";
-                                      const isWinnerP1 =
-                                        isPlayed &&
-                                        (matchItem.gamePareja1 || 0) >
-                                          (matchItem.gamePareja2 || 0);
-                                      const isWinnerP2 =
-                                        isPlayed &&
-                                        (matchItem.gamePareja2 || 0) >
-                                          (matchItem.gamePareja1 || 0);
-                                      return (
-                                        <div
-                                          key={matchItem.id}
-                                          className={`rounded-none border p-3 transition-all duration-300 shadow-[1px_1px_3px_rgba(0,0,0,0.02)] ${
-                                            isAnnulled
-                                              ? "bg-zinc-100/50 text-zinc-400 border-dashed border-zinc-200 opacity-60 pointer-events-none select-none"
-                                              : isPlayed
-                                                ? "bg-[#1A1A1A] text-white border-transparent"
-                                                : "bg-[#FAF8F5]/90 text-[#1A1A1A] border-[#1A1A1A]/10 hover:border-[#1A1A1A]/30"
-                                          }`}
-                                        >
-                                          <div className="flex items-center justify-between mb-1.5 text-[8px] font-bold font-mono tracking-wider opacity-60">
-                                            <span>OCTAVOS #{globalIdx + 1}</span>
-                                            <span>
-                                              {isAnnulled ? "NO SE JUEGA" : isPlayed ? "JUGADO" : "PENDIENTE"}
-                                            </span>
-                                          </div>
-                                          <div className="space-y-1.5">
-                                            {/* Player 1 Row */}
-                                            <div
-                                              className={`flex items-center justify-between px-2 py-1 rounded-none text-[10px] uppercase ${
-                                                isAnnulled
-                                                  ? "bg-zinc-200/20 border border-zinc-300/20 text-zinc-400/80 font-normal line-through"
-                                                  : isPlayed
-                                                    ? isWinnerP1
-                                                      ? "font-black text-white"
-                                                      : "opacity-35 text-white"
-                                                    : "bg-white/85 border border-[#1A1A1A]/5 font-semibold"
-                                              }`}
-                                            >
-                                              <span className="truncate pr-1.5">
-                                                {renderParejaName(
-                                                  matchItem.pareja1,
-                                                  isPlayed || isAnnulled,
-                                                )}
-                                              </span>
-                                              {!isAnnulled && renderSetScoresJSX(matchItem, true, true)}
-                                            </div>
-                                            {/* Player 2 Row */}
-                                            <div
-                                              className={`flex items-center justify-between px-2 py-1 rounded-none text-[10px] uppercase ${
-                                                isAnnulled
-                                                  ? "bg-zinc-200/20 border border-zinc-300/20 text-zinc-400/80 font-normal line-through"
-                                                  : isPlayed
-                                                    ? isWinnerP2
-                                                      ? "font-black text-white"
-                                                      : "opacity-35 text-white"
-                                                    : "bg-white/85 border border-[#1A1A1A]/5 font-semibold"
-                                              }`}
-                                            >
-                                              <span className="truncate pr-1.5">
-                                                {renderParejaName(
-                                                  matchItem.pareja2,
-                                                  isPlayed || isAnnulled,
-                                                )}
-                                              </span>
-                                              {!isAnnulled && renderSetScoresJSX(matchItem, false, true)}
-                                            </div>
-                                          </div>
-                                        </div>
-                                      );
-                                    })}
-                                  </div>
-
-                                  {/* Right Side: Visual bracket connecting the 2 matches */}
-                                  {pair.length === 2 && (
-                                    <div className="flex items-center justify-center w-12 sm:w-14 shrink-0 relative">
-                                      <svg
-                                        viewBox="0 0 40 100"
-                                        className="w-full h-full text-[#1A1A1A]/20 stroke-current"
-                                        fill="none"
-                                        strokeWidth="1"
-                                        preserveAspectRatio="none"
-                                      >
-                                        <path
-                                          d="M 5,25 L 18,25 Q 24,25 24,30 L 24,44 Q 24,48 32,50 Q 24,52 24,56 L 24,70 Q 24,75 18,75 L 5,75"
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                        />
-                                      </svg>
-                                      <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 text-[7px] font-black font-mono text-[#1A1A1A]/40 uppercase whitespace-nowrap bg-[#FAF8F5] px-1 py-0.5 border border-[#1A1A1A]/10 shadow-[1px_1px_0px_rgba(0,0,0,0.03)] scale-90 sm:scale-100">
-                                        4TOS #{pairIdx + 1}
-                                      </div>
-                                    </div>
-                                  )}
-                                </div>
-                              );
-                            });
-                          })()}
-                        </div>
-                      </section>
+                  {/* Info Badge */}
+                  <div className="bg-[#FAF8F5] border-l-2 border-[#b59463] p-3 text-[11px] text-[#1A1A1A] leading-relaxed flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                    <div>
+                      <span className="font-bold block uppercase text-[#b59463] tracking-wider mb-0.5">
+                        Estructura del Torneo
+                      </span>
+                      <p className="opacity-80">
+                        Visualización de llaves en tiempo real desde Octavos hasta la consagración del Campeón. Desliza horizontalmente para navegar por el cuadro.
+                      </p>
                     </div>
-
-                    {/* COLUMN 2: Cuartos de Final */}
-                    <div className="space-y-6 lg:border-l lg:border-[#1A1A1A]/10 lg:pl-6 xl:pl-8">
-                      <section className="space-y-6">
-                        <div className="flex items-center justify-between pb-1.5 border-b-2 border-[#1A1A1A]">
-                          <h2 className="text-[14px] sm:text-[15px] font-black font-mono tracking-widest uppercase text-[#1A1A1A]">
-                            Cuartos de Final
-                          </h2>
-                        </div>
-
-                        {/* Header of Cuartos */}
-                        <div className="bg-[#FAF8F5] border-l-2 border-red-650 p-3 text-[11px] text-[#1A1A1A] leading-relaxed">
-                          <span className="font-bold block uppercase text-red-650 tracking-wider mb-0.5">
-                            Eliminatorias 4tos
-                          </span>
-                          <p className="opacity-80 text-[10px]">
-                            Partidos clasificatorios rumbo a las semifinales.
-                          </p>
-                        </div>
-
-                        <div className="space-y-3.5">
-                          {playoffRounds.cuartos.map((matchItem, idx) => {
-                            const isPlayed = matchItem.estado === "Jugado";
-                            const isWinnerP1 =
-                              isPlayed &&
-                              (matchItem.gamePareja1 || 0) >
-                                (matchItem.gamePareja2 || 0);
-                            const isWinnerP2 =
-                              isPlayed &&
-                              (matchItem.gamePareja2 || 0) >
-                                (matchItem.gamePareja1 || 0);
-                            return (
-                              <div
-                                key={matchItem.id}
-                                className={`rounded-none border p-3 transition-all duration-300 shadow-[2px_2px_4px_rgba(0,0,0,0.03)] ${
-                                  isPlayed
-                                    ? "bg-[#1A1A1A] text-white border-transparent"
-                                    : "bg-[#FAF8F5]/90 text-[#1A1A1A] border-[#1A1A1A]/10 hover:border-[#1A1A1A]/30"
-                                }`}
-                              >
-                                <div className="flex items-center justify-between mb-1.5 text-[8px] font-bold font-mono tracking-wider opacity-60">
-                                  <span>CUARTOS #{idx + 1}</span>
-                                  <span>
-                                    {isPlayed ? "JUGADO" : "PENDIENTE"}
-                                  </span>
-                                </div>
-                                <div className="space-y-1.5">
-                                  {/* Player 1 Row */}
-                                  <div
-                                    className={`flex items-center justify-between px-2 py-1 rounded-none text-[10px] uppercase ${
-                                      isPlayed
-                                        ? isWinnerP1
-                                          ? "font-black text-white"
-                                          : "opacity-35 text-white"
-                                        : "bg-white/85 border border-[#1A1A1A]/5 font-semibold"
-                                    }`}
-                                  >
-                                    <span className="truncate pr-1.5">
-                                      {renderParejaName(
-                                        matchItem.pareja1,
-                                        isPlayed,
-                                      )}
-                                    </span>
-                                    {renderSetScoresJSX(matchItem, true, true)}
-                                  </div>
-                                  {/* Player 2 Row */}
-                                  <div
-                                    className={`flex items-center justify-between px-2 py-1 rounded-none text-[10px] uppercase ${
-                                      isPlayed
-                                        ? isWinnerP2
-                                          ? "font-black text-white"
-                                          : "opacity-35 text-white"
-                                        : "bg-white/85 border border-[#1A1A1A]/5 font-semibold"
-                                    }`}
-                                  >
-                                    <span className="truncate pr-1.5">
-                                      {renderParejaName(
-                                        matchItem.pareja2,
-                                        isPlayed,
-                                      )}
-                                    </span>
-                                    {renderSetScoresJSX(matchItem, false, true)}
-                                  </div>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </section>
+                    <div className="text-[9px] font-mono uppercase bg-[#decfa6]/20 text-[#b59463] border border-[#b59463]/30 px-2.5 py-1 shrink-0 font-extrabold self-start sm:self-center">
+                      CUADRO OFICIAL
                     </div>
+                  </div>
 
-                    {/* COLUMN 3: Semifinales */}
-                    <div className="space-y-6 lg:border-l lg:border-[#1A1A1A]/10 lg:pl-6 xl:pl-8">
-                      <section className="space-y-6">
-                        <div className="flex items-center justify-between pb-1.5 border-b-2 border-[#1A1A1A]">
-                          <h2 className="text-[14px] sm:text-[15px] font-black font-mono tracking-widest uppercase text-[#1A1A1A]">
-                            Semifinales
-                          </h2>
+                  {/* Tree-style Bracket Scroll Container */}
+                  <div className="w-full overflow-x-auto pb-6 -mx-4 px-4 sm:mx-0 sm:px-0">
+                    <div className="flex flex-col min-w-[1150px] py-4">
+                      {/* Column Headers */}
+                      <div className="grid grid-cols-[240px_60px_240px_60px_240px_60px_250px] text-center border-b border-[#1A1A1A]/10 pb-3 mb-6">
+                        <div className="text-[10px] font-black font-mono uppercase tracking-widest text-[#1A1A1A]/60">Octavos de Final</div>
+                        <div></div>
+                        <div className="text-[10px] font-black font-mono uppercase tracking-widest text-[#1A1A1A]/60">Cuartos de Final</div>
+                        <div></div>
+                        <div className="text-[10px] font-black font-mono uppercase tracking-widest text-[#1A1A1A]/60">Semifinales</div>
+                        <div></div>
+                        <div className="text-[10px] font-black font-mono uppercase tracking-widest text-[#b59463]">La Gran Final</div>
+                      </div>
+
+                      {/* Bracket Columns and Branching SVG Connectors */}
+                      <div className="grid grid-cols-[240px_60px_240px_60px_240px_60px_250px] h-[840px] items-stretch">
+                        {/* COLUMN 1: Octavos (8 matches) */}
+                        <div className="flex flex-col justify-around h-full py-2">
+                          {playoffRounds.octavos.map((matchItem, idx) => (
+                            <div key={matchItem.id} className="w-full px-1">
+                              {renderBracketMatchCard(matchItem, `OCTAVOS #${idx + 1}`, false, true)}
+                            </div>
+                          ))}
                         </div>
 
-                        {/* Header of Semis */}
-                        <div className="bg-[#FAF8F5] border-l-2 border-red-650 p-3 text-[11px] text-[#1A1A1A] leading-relaxed">
-                          <span className="font-bold block uppercase text-red-650 tracking-wider mb-0.5">
-                            Eliminatorias Semis
-                          </span>
-                          <p className="opacity-80 text-[10px]">
-                            Partidos de máxima tensión por el pase a la gran final.
-                          </p>
-                        </div>
-
-                        <div className="space-y-3.5">
-                          {playoffRounds.semifinal.map((matchItem, idx) => {
-                            const isPlayed = matchItem.estado === "Jugado";
-                            const isWinnerP1 =
-                              isPlayed &&
-                              (matchItem.gamePareja1 || 0) >
-                                (matchItem.gamePareja2 || 0);
-                            const isWinnerP2 =
-                              isPlayed &&
-                              (matchItem.gamePareja2 || 0) >
-                                (matchItem.gamePareja1 || 0);
-                            return (
-                              <div
-                                key={matchItem.id}
-                                className={`rounded-none border p-3 transition-all duration-300 shadow-[3px_3px_5px_rgba(0,0,0,0.04)] ${
-                                  isPlayed
-                                    ? "bg-[#1A1A1A] text-white border-transparent"
-                                    : "bg-[#FAF8F5]/90 text-[#1A1A1A] border-[#1A1A1A]/10 hover:border-[#1A1A1A]/30"
-                                }`}
+                        {/* CONNECTOR 1: 4 Brackets connecting Octavos to Cuartos */}
+                        <div className="flex flex-col justify-around h-full py-2">
+                          {Array.from({ length: 4 }).map((_, idx) => (
+                            <div key={idx} className="h-[210px] flex items-center justify-center relative">
+                              <svg
+                                viewBox="0 0 60 120"
+                                className="w-full h-full text-[#b59463]/40 stroke-current"
+                                fill="none"
+                                strokeWidth="1.5"
+                                preserveAspectRatio="none"
                               >
-                                <div className="flex items-center justify-between mb-1.5 text-[8px] font-bold font-mono tracking-wider opacity-60">
-                                  <span>SEMIFINAL #{idx + 1}</span>
-                                  <span>
-                                    {isPlayed ? "JUGADO" : "PENDIENTE"}
-                                  </span>
-                                </div>
-                                <div className="space-y-1.5">
-                                  {/* Player 1 Row */}
-                                  <div
-                                    className={`flex items-center justify-between px-2 py-1 rounded-none text-[10px] uppercase ${
-                                      isPlayed
-                                        ? isWinnerP1
-                                          ? "font-black text-white"
-                                          : "opacity-35 text-white"
-                                        : "bg-white/85 border border-[#1A1A1A]/5 font-semibold"
-                                    }`}
-                                  >
-                                    <span className="truncate pr-1.5">
-                                      {renderParejaName(
-                                        matchItem.pareja1,
-                                        isPlayed,
-                                      )}
-                                    </span>
-                                    {renderSetScoresJSX(matchItem, true, true)}
-                                  </div>
-                                  {/* Player 2 Row */}
-                                  <div
-                                    className={`flex items-center justify-between px-2 py-1 rounded-none text-[10px] uppercase ${
-                                      isPlayed
-                                        ? isWinnerP2
-                                          ? "font-black text-white"
-                                          : "opacity-35 text-white"
-                                        : "bg-white/85 border border-[#1A1A1A]/5 font-semibold"
-                                    }`}
-                                  >
-                                    <span className="truncate pr-1.5">
-                                      {renderParejaName(
-                                        matchItem.pareja2,
-                                        isPlayed,
-                                      )}
-                                    </span>
-                                    {renderSetScoresJSX(matchItem, false, true)}
-                                  </div>
-                                </div>
+                                <path
+                                  d="M 0,30 L 25,30 Q 32,30 32,37 L 32,53 Q 32,60 39,60 L 60,60 M 0,90 L 25,90 Q 32,90 32,83 L 32,67 Q 32,60 39,60"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                              <div className="absolute right-1 top-1/2 -translate-y-1/2 text-[7px] font-black font-mono text-[#b59463]/80 uppercase whitespace-nowrap bg-white px-1 py-0.5 border border-[#b59463]/30 shadow-[1px_1px_0px_rgba(0,0,0,0.03)] scale-90">
+                                4TOS #{idx + 1}
                               </div>
-                            );
-                          })}
-                        </div>
-                      </section>
-
-                      {/* LA GRAN FINAL - SECCIÓN AMARILLO/DORADO */}
-                      <section className="space-y-6 pt-4 border-t border-[#1A1A1A]/10">
-                        <div className="flex items-center justify-between pb-1.5 border-b-2 border-amber-500">
-                          <h2 className="text-[14px] sm:text-[15px] font-black font-mono tracking-widest uppercase text-amber-600 flex items-center gap-2">
-                            <span>🏆</span>
-                            <span>La Gran Final</span>
-                          </h2>
+                            </div>
+                          ))}
                         </div>
 
-                        {/* Grand Final Cards Container */}
-                        <div className="space-y-3.5">
-                          {playoffRounds.final.map((matchItem) => {
-                            const isPlayed = matchItem.estado === "Jugado";
-                            const isWinnerP1 =
-                              isPlayed &&
-                              (matchItem.gamePareja1 || 0) >
-                                (matchItem.gamePareja2 || 0);
-                            const isWinnerP2 =
-                              isPlayed &&
-                              (matchItem.gamePareja2 || 0) >
-                                (matchItem.gamePareja1 || 0);
-                            return (
-                              <div
-                                key={matchItem.id}
-                                className={`rounded-none border-2 p-3.5 transition-all duration-300 relative overflow-hidden ${
-                                  isPlayed
-                                    ? "bg-[#1A1A1A] text-white border-amber-500 shadow-[0_4px_12px_rgba(245,158,11,0.15)] ring-1 ring-amber-500"
-                                    : "bg-amber-50/45 text-[#1A1A1A] border-dashed border-amber-500 shadow-[2px_2px_4px_rgba(0,0,0,0.02)]"
-                                }`}
+                        {/* COLUMN 2: Cuartos (4 matches) */}
+                        <div className="flex flex-col justify-around h-full py-2">
+                          {playoffRounds.cuartos.map((matchItem, idx) => (
+                            <div key={matchItem.id} className="w-full px-1">
+                              {renderBracketMatchCard(matchItem, `CUARTOS #${idx + 1}`, false, true)}
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* CONNECTOR 2: 2 Brackets connecting Cuartos to Semis */}
+                        <div className="flex flex-col justify-around h-full py-2">
+                          {Array.from({ length: 2 }).map((_, idx) => (
+                            <div key={idx} className="h-[420px] flex items-center justify-center relative">
+                              <svg
+                                viewBox="0 0 60 120"
+                                className="w-full h-full text-[#b59463]/40 stroke-current"
+                                fill="none"
+                                strokeWidth="1.5"
+                                preserveAspectRatio="none"
                               >
-                                <div className="absolute top-0 right-0 bg-amber-500 text-white text-[5px] font-black uppercase px-1.5 py-0.5 tracking-wider font-mono">
-                                  CAMPEONATO
-                                </div>
-                                <div className="flex items-center justify-between mb-1.5 text-[8px] font-bold font-mono tracking-wider opacity-60">
-                                  <span>FINAL</span>
-                                  <span>
-                                    {isPlayed ? "JUGADO" : "PENDIENTE"}
-                                  </span>
-                                </div>
-                                <div className="space-y-1.5">
-                                  {/* Player 1 Row */}
-                                  <div
-                                    className={`flex items-center justify-between px-2 py-1 rounded-none text-[10px] uppercase ${
-                                      isPlayed
-                                        ? isWinnerP1
-                                          ? "font-black text-amber-400 text-[11px]"
-                                          : "opacity-35 text-white"
-                                        : "bg-white/95 border border-amber-200/60 font-bold"
-                                    }`}
-                                  >
-                                    <span className="truncate pr-1.5">
-                                      {renderParejaName(
-                                        matchItem.pareja1,
-                                        isPlayed,
-                                      )}
-                                    </span>
-                                    {renderSetScoresJSX(matchItem, true, true)}
-                                  </div>
-                                  {/* Player 2 Row */}
-                                  <div
-                                    className={`flex items-center justify-between px-2 py-1 rounded-none text-[10px] uppercase ${
-                                      isPlayed
-                                        ? isWinnerP2
-                                          ? "font-black text-amber-400 text-[11px]"
-                                          : "opacity-35 text-white"
-                                        : "bg-white/95 border border-amber-200/60 font-bold"
-                                    }`}
-                                  >
-                                    <span className="truncate pr-1.5">
-                                      {renderParejaName(
-                                        matchItem.pareja2,
-                                        isPlayed,
-                                      )}
-                                    </span>
-                                    {renderSetScoresJSX(matchItem, false, true)}
-                                  </div>
-                                </div>
+                                <path
+                                  d="M 0,30 L 25,30 Q 32,30 32,37 L 32,53 Q 32,60 39,60 L 60,60 M 0,90 L 25,90 Q 32,90 32,83 L 32,67 Q 32,60 39,60"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                              <div className="absolute right-1 top-1/2 -translate-y-1/2 text-[7px] font-black font-mono text-[#b59463]/80 uppercase whitespace-nowrap bg-white px-1 py-0.5 border border-[#b59463]/30 shadow-[1px_1px_0px_rgba(0,0,0,0.03)] scale-90">
+                                SEMIS #{idx + 1}
                               </div>
-                            );
-                          })}
+                            </div>
+                          ))}
                         </div>
-                      </section>
+
+                        {/* COLUMN 3: Semifinales (2 matches) */}
+                        <div className="flex flex-col justify-around h-full py-2">
+                          {playoffRounds.semifinal.map((matchItem, idx) => (
+                            <div key={matchItem.id} className="w-full px-1">
+                              {renderBracketMatchCard(matchItem, `SEMIFINAL #${idx + 1}`, false, true)}
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* CONNECTOR 3: 1 Bracket connecting Semis to Final */}
+                        <div className="flex flex-col justify-around h-full py-2">
+                          <div className="h-[840px] flex items-center justify-center relative">
+                            <svg
+                              viewBox="0 0 60 120"
+                              className="w-full h-full text-[#b59463]/40 stroke-current"
+                              fill="none"
+                              strokeWidth="1.5"
+                              preserveAspectRatio="none"
+                            >
+                              <path
+                                d="M 0,30 L 25,30 Q 32,30 32,37 L 32,53 Q 32,60 39,60 L 60,60 M 0,90 L 25,90 Q 32,90 32,83 L 32,67 Q 32,60 39,60"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                            <div className="absolute right-1 top-1/2 -translate-y-1/2 text-[7px] font-black font-mono text-[#b59463]/80 uppercase whitespace-nowrap bg-white px-1 py-0.5 border border-[#b59463]/30 shadow-[1px_1px_0px_rgba(0,0,0,0.03)] scale-90">
+                              FINAL
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* COLUMN 4: La Gran Final (1 match) */}
+                        <div className="flex flex-col justify-around h-full py-2">
+                          {playoffRounds.final.map((matchItem) => (
+                            <div key={matchItem.id} className="w-full px-1">
+                              {renderBracketMatchCard(matchItem, "GRAN FINAL", true)}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div> {/* Closing LOWER SECTION */}
